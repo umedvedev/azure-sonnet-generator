@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "java",
+    "AZURE_OPENAI_ENDPOINT": "https://eastus.api.cognitive.microsoft.com/",
+    "AZURE_OPENAI_KEY": ""
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "*"
+  }
+}
