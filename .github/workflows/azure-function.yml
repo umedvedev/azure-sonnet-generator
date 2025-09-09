@@ -27,5 +27,5 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: 'GenerateSonnet'
-          package: 'GenerateSonnet/target/*.jar'
+          package: 'GenerateSonnet/target/azure-functions/func-sonnet-generator/*.jar'
           publish-profile: 'preview'
