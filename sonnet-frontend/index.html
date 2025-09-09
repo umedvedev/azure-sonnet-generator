@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html ng-app="sonnetApp">
+<head>
+    <title>Sonnet Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    
+    <!-- Bootstrap for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .sonnet-textarea {
+            font-family: 'Georgia', serif;
+            font-size: 18px;
+            line-height: 1.8;
+            min-height: 150px;
+            background-color: #fefefe;
+            border: 2px solid #dee2e6;
+            padding: 20px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .header-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body ng-controller="SonnetController">
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-center">
+                    <div class="header-icon">📝</div>
+                    <h1 class="card-title mb-4">Sonnet Generator</h1>
+                    <p class="text-muted mb-4">Enter a topic and let AI create a beautiful 4-line sonnet for you</p>
+                </div>
+                
+                <form ng-submit="generateSonnet()">
+                    <div class="mb-4">
+                        <label for="topic" class="form-label">Topic</label>
+                        <input 
+                            type="text" 
+                            class="form-control form-control-lg" 
+                            id="topic" 
+                            ng-model="topic"
+                            placeholder="e.g., autumn leaves, ocean waves, morning coffee..."
+                            ng-disabled="loading"
+                            required>
+                        <small class="form-text text-muted">Enter any topic you'd like a sonnet about</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mb-4">
+                        <button 
+                            type="submit" 
+                            class="btn btn-primary btn-lg"
+                            ng-disabled="loading || !topic">
+                            <span ng-if="!loading">Generate Sonnet ✨</span>
+                            <span ng-if="loading">
+                                Generating...
+                                <div class="loading-spinner"></div>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div ng-if="error" class="alert alert-danger">
+                    {{ error }}
+                </div>
+                
+                <div ng-if="sonnet" class="mb-3">
+                    <label class="form-label">Your Sonnet</label>
+                    <textarea 
+                        class="form-control sonnet-textarea" 
+                        rows="5" 
+                        readonly
+                        ng-model="sonnet">
+                    </textarea>
+                    <div class="mt-3 text-center">
+                        <button 
+                            class="btn btn-outline-secondary btn-sm me-2" 
+                            ng-click="copySonnet()">
+                            📋 Copy
+                        </button>
+                        <button 
+                            class="btn btn-outline-secondary btn-sm" 
+                            ng-click="clearSonnet()">
+                            🗑️ Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <div ng-if="copySuccess" class="alert alert-success mt-3">
+                    Sonnet copied to clipboard!
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4 text-muted">
+            <small>Powered by Azure Functions & Azure OpenAI</small>
+        </div>
+    </div>
+
+    <!-- AngularJS App -->
+    <script>
+        angular.module('sonnetApp', [])
+            .controller('SonnetController', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
+                // Initialize variables
+                $scope.topic = '';
+                $scope.sonnet = '';
+                $scope.loading = false;
+                $scope.error = '';
+                $scope.copySuccess = false;
+                
+                // Configure API endpoint
+                // For local testing
+                $scope.apiUrl = 'http://localhost:7071/api/sonnet';
+                
+                // For production (update with your Azure Function URL)
+                // $scope.apiUrl = 'https://func-sonnet-generator.azurewebsites.net/api/sonnet';
+                
+                // Generate sonnet function
+                $scope.generateSonnet = function() {
+                    if (!$scope.topic) return;
+                    
+                    $scope.loading = true;
+                    $scope.error = '';
+                    $scope.sonnet = '';
+                    $scope.copySuccess = false;
+                    
+                    $http.post($scope.apiUrl, { topic: $scope.topic })
+                        .then(function(response) {
+                            $scope.sonnet = response.data.sonnet;
+                            $scope.loading = false;
+                        })
+                        .catch(function(error) {
+                            $scope.loading = false;
+                            if (error.data && error.data.error) {
+                                $scope.error = error.data.error;
+                            } else if (error.status === 0) {
+                                $scope.error = 'Cannot connect to the server. Please check if the API is running.';
+                            } else {
+                                $scope.error = 'An error occurred while generating the sonnet. Please try again.';
+                            }
+                            console.error('Error:', error);
+                        });
+                };
+                
+                // Copy sonnet to clipboard
+                $scope.copySonnet = function() {
+                    navigator.clipboard.writeText($scope.sonnet).then(function() {
+                        $scope.copySuccess = true;
+                        $scope.$apply();
+                        $timeout(function() {
+                            $scope.copySuccess = false;
+                        }, 3000);
+                    });
+                };
+                
+                // Clear sonnet
+                $scope.clearSonnet = function() {
+                    $scope.sonnet = '';
+                    $scope.topic = '';
+                    $scope.copySuccess = false;
+                };
+            }]);
+    </script>
+</body>
+</html>

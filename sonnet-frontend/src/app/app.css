@@ -1,0 +1,42 @@
+body {
+    background-color: #f8f9fa;
+}
+.container {
+    max-width: 800px;
+    margin-top: 50px;
+}
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+.sonnet-textarea {
+    font-family: 'Georgia', serif;
+    font-size: 18px;
+    line-height: 1.8;
+    min-height: 150px;
+    background-color: #fefefe;
+    border: 2px solid #dee2e6;
+    padding: 20px;
+}
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.header-icon {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+.error-message {
+    color: #dc3545;
+    margin-top: 10px;
+}
