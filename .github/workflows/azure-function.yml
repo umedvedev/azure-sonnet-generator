@@ -26,6 +26,6 @@ jobs:
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         with:
-          app-name: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
-          package: GenerateSonnet/target/*.jar
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          app-name: 'GenerateSonnet'
+          package: 'GenerateSonnet/target/*.jar'
+          publish-profile: 'preview'
