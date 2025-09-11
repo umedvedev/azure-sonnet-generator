@@ -33,6 +33,9 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'microsoft'
 
+      - name: Run SpotBugs
+        run: mvn com.github.spotbugs:spotbugs-maven-plugin:check
+
       - name: 'Restore Project Dependencies Using Mvn'
         shell: pwsh
         run: |
