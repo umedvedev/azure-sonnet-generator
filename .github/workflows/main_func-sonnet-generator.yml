@@ -41,13 +41,13 @@ jobs:
           popd 
 
       - name: 'Upload JaCoCo Coverage Report (HTML)'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-html-report
           path: '${{ env.PACKAGE_DIRECTORY }}/target/site/jacoco/index.html'
 
       - name: 'Upload JaCoCo Coverage Report (XML)'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-xml-report
           path: '${{ env.PACKAGE_DIRECTORY }}/target/site/jacoco/jacoco.xml'
