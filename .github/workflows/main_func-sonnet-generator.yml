@@ -37,8 +37,21 @@ jobs:
         shell: pwsh
         run: |
           pushd './${{ env.PACKAGE_DIRECTORY }}'
-          mvn com.github.spotbugs:spotbugs-maven-plugin:check
+          mvn clean com.github.spotbugs:spotbugs-maven-plugin:check verify
           popd 
+
+      - name: 'Upload JaCoCo Coverage Report (HTML)'
+        uses: actions/upload-artifact@v3
+        with:
+          name: jacoco-html-report
+          path: '${{ env.PACKAGE_DIRECTORY }}/target/site/jacoco/index.html'
+
+      - name: 'Upload JaCoCo Coverage Report (XML)'
+        uses: actions/upload-artifact@v3
+        with:
+          name: jacoco-xml-report
+          path: '${{ env.PACKAGE_DIRECTORY }}/target/site/jacoco/jacoco.xml'
+
 
       - name: 'Restore Project Dependencies Using Mvn'
         shell: pwsh
@@ -62,4 +75,3 @@ jobs:
           slot-name: 'Production'
           package: '${{ env.PACKAGE_DIRECTORY }}'
           respect-pom-xml: true
-          
